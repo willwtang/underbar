@@ -398,29 +398,6 @@
 
   };
 
-  // Zip together two or more arrays with elements of the same index
-  // going together.
-  //
-  // Example:
-  // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
-  _.zip = function() {
-    var output = [];
-    var longest = 0;
-
-    _.each(arguments, function(value) {
-      longest = Math.max(longest, value.length);
-    });
-
-    for(var i = 0; i < longest; i++) {
-      var subarray = [];
-      _.each(arguments, function(value) {
-        subarray.push(value[i]);
-      });
-      output.push(subarray);
-    }
-    return arguments;
-  };
-
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
   //
@@ -443,20 +420,73 @@
     return output;
   };
 
+  // Zip together two or more arrays with elements of the same index
+  // going together.
+  //
+  // Example:
+  // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
+  _.zip = function() {
+    var output = [];
+    var longest = 0;
+
+    _.each(arguments, function(value) {
+      longest = Math.max(longest, value.length);
+    });
+
+    for(var i = 0; i < longest; i++) {
+      var subarray = [];
+      _.each(arguments, function(value) {
+        subarray.push(value[i]);
+      });
+      output.push(subarray);
+    }
+    return output;
+  };
+
+  // check if an object or array is deeply equal
+  _.isEqual = function(a, b) {
+
+    if (Array.isArray(a) && Array.isArray(b)) {
+      if (a.length != b.length) return false;
+      for (var i = 0; i < a.length; i++) {
+        if(!(_.isEqual(a[i], b[i]))) return false;
+      }
+      return true;
+    } else if({}.toString.call(a) === '[object Object]' && {}.toString.call(b) === '[object Object]') {
+      if (Object.keys(a).length !== Object.keys(b).length) return false;
+      for (var prop in a) {
+        if(!(_.isEqual(a[prop], b[prop]))) return false;
+      }
+      return true;
+    } else {
+      return a === b;
+    }
+  };
+
+  _.arrayContains = function(obj, item) {
+    //if (Array.isArray(obj)) obj = Object.values(obj);
+
+    for(var i = 0; i < obj.length; i++) {
+      if (_.isEqual(obj[i], item)) return true;
+    }
+  };
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var args = Array.prototype.slice.call(arguments, 0);
+    
+
+
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
   _.difference = function(array) {
-    var args = Array.prototype.slice.call(arguments, 1);
-    var log = {};
+    var args = _.flatten(Array.prototype.slice.call(arguments, 1));
+    var output = [];
 
-    var hashMap = _.each(args, function(value) {
-      _.each(value)
-    }
+    return _.filter(array, function(value) {
+      return !(_.arrayContains(args, value));
     })
 
   };
@@ -478,14 +508,14 @@
       } 
       // there is some discrepancy among Bookstrap's description of this problem and the description here. 
       // Bookstrap says the function should 
-      else if (called === 1) {
+      /*else if (called === 1) {
         called += 1;
         setTimeout(function() { called -= 1}, wait);
         setTimeout(function() { 
           result = func.apply(this, arguments);
         }, wait);
         return result;
-      }
+      }*/
     }
 
   };
