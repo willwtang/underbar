@@ -427,13 +427,13 @@
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
     var output = [];
-    var longest = 0;
+    var l = 0;
 
     _.each(arguments, function(value) {
-      longest = Math.max(longest, value.length);
+      l = Math.max(l, value.length);
     });
 
-    for(var i = 0; i < longest; i++) {
+    for(var i = 0; i < l; i++) {
       var subarray = [];
       _.each(arguments, function(value) {
         subarray.push(value[i]);
@@ -497,15 +497,24 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
-    var called = 0;
+    var lastCalled = 0;
+    var calledTwice = false;
     var result;
     return function() {
-      if (called === 0) {
-        called += 1;
-        setTimeout(function() { called -= 1}, wait);
+      var now = Date.now();
+      if (now - lastCalled > wait && !calledTwice) {
+        lastCalled = now;
         result = func.apply(this, arguments);
         return result;
-      } 
+      } else if (!calledTwice) {
+        calledTwice = true;
+        setTimeout(function() {
+          result = func.apply(this, arguments);
+          lastCalled = Date.now();
+          calledTwice = false;
+        }, wait - (now - lastCalled));
+        return result;
+      }
       // there is some discrepancy among Bookstrap's description of this problem and the description here. 
       // Bookstrap says the function should 
       /*else if (called === 1) {
