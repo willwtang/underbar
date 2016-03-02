@@ -469,14 +469,25 @@
     for(var i = 0; i < obj.length; i++) {
       if (_.isEqual(obj[i], item)) return true;
     }
+    return false;
   };
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
     var args = Array.prototype.slice.call(arguments, 0);
-    
+    var shortest = _.reduce(args, function(accumulator, iteratee) {
+      if (accumulator.length > iteratee.length) return iteratee;
+      else return accumulator;
+    });
 
+    //return shortest;
 
+    return _.filter(shortest, function(value) {
+      for (var i = 0; i < args.length; i++) {
+        if (!_.arrayContains(args[i], value)) return false;
+      }
+      return true;
+    });
   };
 
   // Take the difference between one array and a number of other arrays.
@@ -498,23 +509,22 @@
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
     var lastCalled = 0;
-    var calledTwice = false;
+    var later = null;
     var result;
+
     return function() {
       var now = Date.now();
-      if (now - lastCalled > wait && !calledTwice) {
+      if (now - lastCalled > wait) {
         lastCalled = now;
         result = func.apply(this, arguments);
-        return result;
-      } else if (!calledTwice) {
-        calledTwice = true;
-        setTimeout(function() {
+      } else if (!later) {
+        later = setTimeout(function() {
           result = func.apply(this, arguments);
           lastCalled = Date.now();
-          calledTwice = false;
+          later = null;
         }, wait - (now - lastCalled));
-        return result;
       }
+      return result;
       // there is some discrepancy among Bookstrap's description of this problem and the description here. 
       // Bookstrap says the function should 
       /*else if (called === 1) {
