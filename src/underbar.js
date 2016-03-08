@@ -38,10 +38,8 @@
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
   _.last = function(array, n) {
-    if (n === 0)
-      return [];
-    else
-      return n === undefined ? array[array.length - 1] : array.slice(-n);
+    if (n === 0) return [];
+    else return n === undefined ? array[array.length - 1] : array.slice(-n);
   };
 
   // Call iterator(value, key, collection) for each element of collection.
@@ -169,8 +167,7 @@
         accumulator = value;
         first = false;
       }
-      else 
-        accumulator = iterator(accumulator, value);
+      else accumulator = iterator(accumulator, value);
     });
     return accumulator;
   };
@@ -195,8 +192,7 @@
       iterator = _.identity;
 
     return _.reduce(collection, function(accumulator, current) {
-      if (!iterator(current))
-        accumulator = false;
+      if (!iterator(current)) accumulator = false;
       return accumulator;
     }, true);
   };
@@ -507,7 +503,27 @@
   // on this function.
   //
   // Note: This is difficult! It may take a while to implement.
+
+  // _.throttle follows SpecRunner.html requirements
+
   _.throttle = function(func, wait) {
+    var called = 0;
+    var result;
+
+    return function() {
+      if (!called) {
+        called = 1;
+        result = func.apply(this, arguments);
+        setTimeout(function(){ called = 0 }, wait);
+      }
+      return result;
+    }
+  }
+
+
+  // _.throttle2 follows Bookstrap requirements
+
+  _.throttle2 = function(func, wait) {
     var lastCalled = 0;
     var later = null;
     var result;
