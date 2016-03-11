@@ -81,8 +81,7 @@
   _.filter = function(collection, test) {
     var output = [];
     _.each(collection, function(value) {
-      if (test(value)) 
-        output.push(value);
+      if (test(value)) output.push(value);
     });
     return output;
   };
@@ -188,8 +187,7 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
-    if (arguments.length < 2)
-      iterator = _.identity;
+    if (!iterator) iterator = _.identity;
 
     return _.reduce(collection, function(accumulator, current) {
       if (!iterator(current)) accumulator = false;
@@ -202,8 +200,7 @@
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
 
-    if (arguments.length < 2)
-      iterator = _.identity;
+    if (!iterator) iterator = _.identity;
 
     return !(_.every(collection, function(value) {
       return !iterator(value);
@@ -247,8 +244,7 @@
 
     _.each(toExtend, function(object) {
       _.each(object, function(value, key) {
-        if (!obj.hasOwnProperty(key))
-          obj[key] = value;
+        if (!obj.hasOwnProperty(key)) obj[key] = value;
       });
     });
     return obj;
@@ -299,8 +295,7 @@
     return function() {
       var address = JSON.stringify(arguments);
 
-      if(!memo[address]) 
-        memo[address] = func.apply(this, arguments);
+      if(memo[address] === undefined) memo[address] = func.apply(this, arguments);
       
       return memo[address];
     }
@@ -314,9 +309,7 @@
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
     var args = Array.prototype.slice.call(arguments, 2);
-    setTimeout(function(){
-      return func.apply(null, args);
-    }, wait);
+    setTimeout(function(){ func.apply(null, args); }, wait);
   };
 
 
@@ -541,16 +534,6 @@
         }, wait - (now - lastCalled));
       }
       return result;
-      // there is some discrepancy among Bookstrap's description of this problem and the description here. 
-      // Bookstrap says the function should 
-      /*else if (called === 1) {
-        called += 1;
-        setTimeout(function() { called -= 1}, wait);
-        setTimeout(function() { 
-          result = func.apply(this, arguments);
-        }, wait);
-        return result;
-      }*/
     }
 
   };
